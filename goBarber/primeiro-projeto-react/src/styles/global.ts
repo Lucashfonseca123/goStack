@@ -11,7 +11,7 @@ export default createGlobalStyle`
   }
 
   body {
-    background: #f0f0f5 url(${githubBackground});
+    background: #f0f0f5 url(${githubBackground}) no-repeat 70% top;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -23,5 +23,9 @@ export default createGlobalStyle`
     max-width: 960px;
     margin: 0 auto;
     padding: 40px 20px;
+  }
+
+  button {
+    cursor: pointer;
   }
 `;
