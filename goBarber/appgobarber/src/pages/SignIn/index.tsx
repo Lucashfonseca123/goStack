@@ -77,8 +77,6 @@ const SignIn: React.FC = () => {
         'Erro na autenticação',
         'Ocorreu um erro ao fazer login, cheque as credenciaias',
       );
-
-      // disparar um toast
     }
   }, []);
 
