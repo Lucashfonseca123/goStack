@@ -1,25 +1,28 @@
-import { getRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
+import { injectable, inject } from 'tsyringe';
 
-import AppError from '../../../shared/errors/AppError';
+import AppError from '@shared/errors/AppError';
+import IUserRepository from '../repositories/IUserRepository';
 
-import User from '../entities/User';
+import User from '../infra/typeorm/entities/User';
 
-interface Request {
+interface IRequest {
 	name: string;
 	email: string;
 	password: string;
 }
 
+@injectable()
 class CreateUserService {
-	public async execute({ name, email, password }: Request): Promise<User> {
-		// Caso não precise de um método especifico (Alem de create, find, delete), importo o getRepository
-		const userRepository = getRepository(User);
+	constructor(
+		@inject('UserRepository')
+		private userRepository: IUserRepository,
+	) {}
 
-		const checkUserExists = await userRepository.findOne({
-			// É igual a email = email
-			where: { email },
-		});
+	public async execute({ name, email, password }: IRequest): Promise<User> {
+		// Caso não precise de um método especifico (Alem de create, find, delete), importo o getRepository
+
+		const checkUserExists = await this.userRepository.findByEmail(email);
 
 		// Service sempre dispara um erro
 		if (checkUserExists) {
@@ -28,13 +31,11 @@ class CreateUserService {
 
 		const hashedPassword = await hash(password, 8);
 
-		const user = userRepository.create({
+		const user = await this.userRepository.create({
 			name,
 			email,
 			password: hashedPassword,
 		});
-
-		await userRepository.save(user);
 
 		return user;
 	}
