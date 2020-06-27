@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -43,6 +43,8 @@ const SignUp: React.FC = () => {
   const { user, updateUser } = useAuth();
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
+
+  const [avatar, setAvatar] = useState('');
 
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
@@ -142,6 +144,8 @@ const SignUp: React.FC = () => {
 
         console.log(response.uri);
 
+        setAvatar(response.uri);
+
         const data = new FormData();
 
         data.append('avatar', {
@@ -150,9 +154,9 @@ const SignUp: React.FC = () => {
           uri: response.uri,
         });
 
-        api.patch('users/avatar', data).then((apiResponse) => {
-          updateUser(apiResponse.data);
-        });
+        // api.patch('users/avatar', data).then((apiResponse) => {
+        //   updateUser(apiResponse.data);
+        // });
       },
     );
   }, [updateUser, user.id]);
@@ -173,10 +177,11 @@ const SignUp: React.FC = () => {
             <BackButton onPress={handleGoBack}>
               <Icon name="chevron-left" size={24} color="#999591" />
             </BackButton>
-            <UserAvatarButton onPress={() => {}}>
+            <UserAvatarButton onPress={handleUpdateAvatar}>
               <UserAvatar
                 source={{
                   uri:
+                    avatar ||
                     'https://avatars2.githubusercontent.com/u/32250723?s=460&u=a09113cd70b1d2ce5677e2950467715a6376d2fa&v=4',
                 }}
               />
